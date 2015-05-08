@@ -1,9 +1,19 @@
 package hk.ust.comp4641.project.main;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 import hk.ust.comp4641.project.dataParser.*;
 import hk.ust.comp4641.project.dataType.*;
@@ -188,6 +198,7 @@ public class Main {
 
 		similarMatrix = new Matrix(simTable);
 		userMatrix = new Matrix(ratingTable);
+		
 
 		// Create matrix with [1, 1, ..., 1]
 		Matrix colVector = new Matrix(i_size, 1, 1.0);
@@ -199,7 +210,7 @@ public class Main {
 		System.out.println("numVector:");
 		numVector.print(i_size, 1);
 		/**  END CHECK  **/
-
+		
 		// divide the number by sqrt of row sum.
 		for(int i = 0; i < i_size; i++){
 			for(int j = 0; j < i_size; j++){
@@ -212,14 +223,19 @@ public class Main {
 		}
 
 		predictionMatrix = userMatrix.times(similarMatrix);
+		double[][] predTable = new double[predictionMatrix.getRowDimension()][predictionMatrix.getColumnDimension()];
 		// set value to -1 if the corresponding entry has the exact rating.
 		for(int i = 0; i < predictionMatrix.getRowDimension(); i++){
 			for(int j = 0; j < predictionMatrix.getColumnDimension(); j++){
 				if(ratingTable[i][j] != 0.0){
 					predictionMatrix.set(i, j, -1);
 				}
+				predTable[i][j] = predictionMatrix.get(i, j);
 			}
 		}
+		
+		
+		
 
 		/** Check **/
 		/**
@@ -228,6 +244,8 @@ public class Main {
 		System.out.println("Prediction.");
 		predictionMatrix.print(i_size, c_size);
 		/** END CHECK **/
+		
+		/********************************START YOUR TESTING HERE*****************************************/
 
 
 		// Terminate the data parser before exit
