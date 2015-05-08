@@ -24,24 +24,28 @@ public class Main {
 		HashMap<String, List<String>> itemDict = new HashMap<String, List<String>>();
 		HashMap<String, List<Review>> cusDict = new HashMap<String, List<Review>>();
 		List<String> itemProfile, userProfile;
-		
+
+		System.out.println("Finished initialization.");
+
 		// Similar matrix table and user rating will be stored here.
 		Matrix similarMatrix, userMatrix;
 		// prediction matrix: prediction[user A][item X].
 		// value = -1 if the customer has declared.
 		Matrix predictionMatrix;
 
-		
+
 		iiter = itemList.keys();
 		citer = customerList.keys();
 		while((ikey = (String)iiter.next()) != null){
 			itemDict.put(ikey, ((Item) itemList.get(ikey)).getSimilarList());
-//			System.out.println(ikey + " " + itemDict.get(ikey));
+			//			System.out.println(ikey + " " + itemDict.get(ikey));
 		}
 		while((ckey = (String)citer.next()) != null){
 			cusDict.put(ckey, ((Customer) customerList.get(ckey)).getReviewList());
-			System.out.println(ckey + " " + cusDict.get(ckey));
+			//			System.out.println(ckey + " " + cusDict.get(ckey));
 		}
+
+		System.out.println("Finished putting Dictionaries.");
 
 		// re-initialize the iterator.
 		iiter = itemList.keys();
@@ -62,7 +66,13 @@ public class Main {
 					if(! tempList.contains(ikey)){
 						// update that item B is similar to item A
 
-						itemDict.get(itemB).add(ikey);
+						if(itemDict.get(itemB) == null){
+							List<String> tempArray = new ArrayList<String>();
+							tempArray.add(ikey);
+							itemDict.put(itemB, tempArray);
+						}else{
+							itemDict.get(itemB).add(ikey);
+						}
 					}
 				}else{
 					// add item B to the hashMap
@@ -73,6 +83,7 @@ public class Main {
 			}
 		}
 
+		System.out.println("Finished item creation.");
 
 		/** Check: print the whole item hashMap. **/
 		/**
@@ -98,7 +109,7 @@ public class Main {
 		}
 		/**  END CHECK  **/
 
-		
+
 		// Create a matrix
 		i_size = itemDict.size();
 		c_size = cusDict.size();
@@ -117,7 +128,9 @@ public class Main {
 		for(String str : cusDict.keySet()){
 			userProfile.add(str);
 		}
-		
+
+		System.out.println("Finished buiding profiles.");
+
 		// If item A & B is similar, put 1 to the corresponding entry. Otherwise, it's default 0. 
 		{
 			int index = 0;
@@ -131,7 +144,7 @@ public class Main {
 				index++;
 			}
 		}
-		
+
 		// raingTable 2D array: customer ID = row, column represent product with rating. 
 		// Order of product based on index of that in itemProfile.
 		{
@@ -151,7 +164,7 @@ public class Main {
 			}
 		}
 
-
+		System.out.println("Finished creating tables.");
 
 		/** Checking the double array. **/
 		/** item **/
@@ -180,7 +193,7 @@ public class Main {
 		Matrix colVector = new Matrix(i_size, 1, 1.0);
 		Matrix numVector = new Matrix(i_size, 1);
 		numVector = similarMatrix.times(colVector);
-		
+
 		/** Check **/
 		/**
 		System.out.println("numVector:");
@@ -197,7 +210,7 @@ public class Main {
 				similarMatrix.set(i, j, temp / Math.sqrt(numVector.get(i, 0)));
 			}
 		}
-		
+
 		predictionMatrix = userMatrix.times(similarMatrix);
 		// set value to -1 if the corresponding entry has the exact rating.
 		for(int i = 0; i < predictionMatrix.getRowDimension(); i++){
@@ -215,7 +228,7 @@ public class Main {
 		System.out.println("Prediction.");
 		predictionMatrix.print(i_size, c_size);
 		/** END CHECK **/
-		
+
 
 		// Terminate the data parser before exit
 		DataParser.terminate();
